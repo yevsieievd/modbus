@@ -1,0 +1,13 @@
+#!/bin/bash
+
+while [ "1"="1" ]; do
+    WORK1="0"
+    for PID in $( pidof -s sudo python /home/pi/src/modbus/mbus.py ); do
+	WORK1="1"
+    done
+    if [[ "$WORK1" = "0" ]]; then
+	killall mbus.py
+	sudo python /home/pi/src/modbus/mbus.py
+    fi
+    sleep 1
+done
