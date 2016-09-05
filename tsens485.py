@@ -59,13 +59,16 @@ class Tsens485(abstract_driver.AbstractDriver):
                                 set_param_q = "UPDATE parametrs SET value=%f, last_update=NOW() WHERE bus_id='%d' AND addr='%d'" % (ctrl_state[p_addr], self.slaveaddress, p_addr)
                             self.cursor.execute(set_param_q)
                             if to_log == 1:
-                                self.log_param (p_addr, 1, p_value)
+                                self.log_param (p_addr, 1, ctrl_state[p_addr])
                         else: #To the ctrl
                             if p_addr == 1 or p_addr == 2:
                                 value_to_set = int(p_value*100)
                             else:
                                 value_to_set = int(p_value)
-                            self.write_register(p_addr, value_to_set, numberOfDecimals=0, functioncode=6, signed=False)
+                            try: #Попробовать запихнуть в while
+                                self.write_register(p_addr, value_to_set, numberOfDecimals=0, functioncode=6, signed=False)
+                            except (IOError, ValueError, TypeError):
+                                pass
             return True
         else:
             self.set_offliune_to_db()
