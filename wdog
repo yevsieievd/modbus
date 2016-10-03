@@ -1,0 +1,27 @@
+#!/bin/bash
+
+while [ "1"="1" ]; do
+    WORK1="0"
+    for PID in $( pidof -s mbus.py ); do
+	WORK1="1"
+	echo "mbus - ok"
+    done
+    if [[ "$WORK1" = "0" ]]; then
+	killall mbus.py
+	screen -dmS mbus sudo /home/pi/src/modbus/mbus.py
+	echo "mbus start"
+    fi
+
+    WORK2="0"
+    for PID in $( pidof -s /usr/bin/python /home/pi/src/iface/iface/manage.py runserver 0.0.0.0:8000 ); do
+        WORK2="1"
+	echo "runserver ok"
+    done
+    if [[ "$WORK2" = "0" ]]; then
+        killall runserver
+        screen -dmS django runserver
+	echo "runserver start"
+    fi
+
+    sleep 10
+done
